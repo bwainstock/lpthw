@@ -10,19 +10,19 @@ class Scene(object):
 class Engine(object):
 
         def __init__(self, scene_map):
-                print "Engine __init__ has scene_map", scene_map
+                #print "Engine __init__ has scene_map", scene_map
                 self.scene_map = scene_map
 
         def play(self):
                 current_scene = self.scene_map.opening_scene()
-                print "Plays first scene", current_scene
+                #print "Plays first scene", current_scene
 
                 while True:
                         print "\n--------"
                         next_scene_name = current_scene.enter()
-                        print "next scene", next_scene_name
+                        #print "next scene", next_scene_name
                         current_scene = self.scene_map.next_scene(next_scene_name)
-                        print "map returns new scene", current_scene
+                        #print "map returns new scene", current_scene
 
 class Death(Scene):
 
@@ -72,19 +72,22 @@ class CentralCorridor(Scene):
 class LaserWeaponArmory(Scene):
 
         def enter(self):
-                print   """
-                        You do a dive roll into the ARmory.  There's a keypad on the bomb's case.
-                        If you get the code wrong 10 times, the lock closes forever.  There appears
-                        to be 3 digits in the code
-                        """
+                
+                print "You do a dive roll into the ARmory.  There's a keypad on the bomb's case."
+                print "If you get the code wrong 10 times, the lock closes forever.  There appears"
+                print " to be 3 digits in the code"
+                        
                 code = "%d%d%d" % (randint(1,9), randint(1,9), randint(1,9))
+                print "CODE: ", code
                 guess = raw_input("[keypad]> ")
                 guesses = 0
 
                 while guess != code and guesses < 10:
                         print "BZZZZEDDDD!"
-                        guess += 1
+                        print guesses
+                        guesses += 1
                         guess = raw_input("[keypad]> ")
+                        print "GUESS: ", guess
 
                 if guess == code:
                         print "The container pops open and you grab the bomb.  Get to the bridge!"
@@ -129,7 +132,9 @@ class EscapePod(Scene):
                 print "Which one do you take?"
 
                 good_pod = randint(1,5)
+                print good_pod
                 guess = raw_input("[pod #]")
+                
 
                 if int(guess) != good_pod:
                         print "You jump into pod %s and hit the eject button." % guess
@@ -144,6 +149,10 @@ class EscapePod(Scene):
 
                 return 'finished'
 
+class EndGame(Scene):
+
+        def enter(self):
+                exit(1)
 
 class Map(object):
 
@@ -152,17 +161,19 @@ class Map(object):
                 'laser_weapon_armory': LaserWeaponArmory(),
                 'the_bridge': TheBridge(),
                 'escape_pod': EscapePod(),
-                'death': Death()
+                'death': Death(),
+                'finished': EndGame()
                 }
 
         def __init__(self, start_scene):
                 self.start_scene = start_scene
-                print "start_scene in __init__", self.start_scene
+                #print "start_scene in __init__", self.start_scene
 
         def next_scene(self, scene_name):
-                print "start_scene in next_scene"
-                val = Map.scenes.get(scene_name)
-                print "next_scene returns", val
+                #print "start_scene in next_scene"
+                val = Map.scenes.get(scene_name,'CentralCorridor()')
+                #print "next_scene returns", val
+                return val
 
         def opening_scene(self):
                 return self.next_scene(self.start_scene)
